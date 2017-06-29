@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+// @<COPYRIGHT>@
+// ==================================================
+// Copyright 2014.
+// Siemens Product Lifecycle Management Software Inc.
+// All Rights Reserved.
+// ==================================================
+// @<COPYRIGHT>@
+-->
+<!-- Style sheet rendering for Item creation. -->
+<rendering>
+    <page titleKey="tc_xrt_CreateItem">
+        <section titleKey="tc_xrt_properties">
+            <property name="item_id" renderingHint="textfield"/>
+            <property name="revision:item_revision_id"/>
+	<label text = "NOTE: Input Sector Name and POD Level" style="font-size:09; font-style:plain;font-family:Tahoma; font-weight:bold" />
+            <property name="kp2_Sector"/>
+            <property name="kp2_PODOccurrence"/>
+            <property name="kp2_ProductPortfolio"/>
+            <property name="object_name"/>
+            <property name="object_desc"/>
+        </section>
+    </page>
+</rendering>

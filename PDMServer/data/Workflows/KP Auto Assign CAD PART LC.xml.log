@@ -1,0 +1,40 @@
+****************************
+   PLMXML Log File Header   
+   ----------------------   
+            EXPORT          
+****************************
+Server Hostname :  TCDEVCORP
+Teamcenter version :  Teamcenter V11000.2.2.20_20160504.00
+Syslog-FileName :  C:\Users\ADMINI~1\AppData\Local\Temp\2\tcserver.exe16dc0c0a.syslog
+LOG-FileName is:  KP Auto Assign CAD PART LC.xml.log
+XML-FileName is:  KP Auto Assign CAD PART LC.xml
+XSLT-FileName is:  
+TransferMode Name :  workflow_template_mode
+OverWrite-ExistingData is:  0
+CheckOutObjects-UponExport is:  0
+CheckFor-ExportPrivilege is:  1
+****************************
+///// Teamcenter Export Summary BEGIN: Processed the following Teamcenter Objects
+ TCObject:: AM_ACL                                             Count:: 3 
+ TCObject:: EPMAction                                          Count:: 37 
+ TCObject:: EPMAddStatusTaskTemplate                           Count:: 7 
+ TCObject:: EPMBRHandler                                       Count:: 7 
+ TCObject:: EPMBusinessRule                                    Count:: 7 
+ TCObject:: EPMConditionTaskTemplate                           Count:: 1 
+ TCObject:: EPMDoTaskTemplate                                  Count:: 3 
+ TCObject:: EPMHandler                                         Count:: 40 
+ TCObject:: EPMOrTaskTemplate                                  Count:: 3 
+ TCObject:: EPMPerformSignoffTaskTemplate                      Count:: 3 
+ TCObject:: EPMReviewTaskTemplate                              Count:: 3 
+ TCObject:: EPMSelectSignoffTaskTemplate                       Count:: 3 
+ TCObject:: EPMTaskTemplate                                    Count:: 1 
+///// Teamcenter Export Summary: Generated the following PLMXML Elements
+ Element:: UserData                                           Count:: 3 
+ Element:: WorkflowAction                                     Count:: 37 
+ Element:: WorkflowBusinessRule                               Count:: 7 
+ Element:: WorkflowBusinessRuleHandler                        Count:: 7 
+ Element:: WorkflowHandler                                    Count:: 40 
+ Element:: WorkflowTemplate                                   Count:: 24 
+///// Teamcenter Export Summary END: /////
+
+

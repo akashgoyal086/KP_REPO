@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+// @<COPYRIGHT>@
+// ==================================================
+// Copyright 2014.
+// Siemens Product Lifecycle Management Software Inc.
+// All Rights Reserved.
+// ==================================================
+// @<COPYRIGHT>@
+-->
+<!-- Style sheet rendering for special Document creation (#1). -->
+<rendering>
+  <page>
+    <section>
+	<label text = "NOTE: Input Document Name and Subject" style="font-size:09; font-style:plain;font-family:Tahoma; font-weight:bold" />
+	<separator/>
+	<break/>
+      <property name="item_id" renderingHint="textfield"/>
+      <property name="revision:item_revision_id" />
+      <property name="revision:DocumentSubject" />
+      <property name="object_name"/>
+      <property name="object_desc" />
+      <property name="revision:DocumentTitle" />
+      <property name="revision:DocumentAuthor" />
+    </section>
+  </page>
+</rendering>

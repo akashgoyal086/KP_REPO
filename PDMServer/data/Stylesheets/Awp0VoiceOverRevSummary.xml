@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+// @<COPYRIGHT>@
+// ==================================================
+// Copyright 2015.
+// Siemens Product Lifecycle Management Software Inc.
+// All Rights Reserved.
+// ==================================================
+// @<COPYRIGHT>@
+-->
+<!-- Default style sheet for displaying item rev summary. -->
+<rendering>
+    <header>
+        <image source="type"/>
+        <property name="owning_user"/>
+        <property name="last_mod_date"/>
+        <property name="release_status_list" renderingHint="label"/>
+        <property name="object_type"/>
+    </header>
+    <page titleKey="tc_xrt_Overview">
+        <column>
+            <section titleKey="tc_xrt_properties">
+                <property name="item_id" renderingHint="label"/>
+                <property name="item_revision_id" renderingHint="label"/>
+                <property name="object_name"/>
+                <property name="object_desc"/>
+                <property name="object_type"/>
+	<break/>
+	<property name="kp2_SectorName"/>
+	<break/>
+                    <property name="kp2_JIRA_ID"/>
+	<break/>
+                <property name="release_status_list" renderingHint="label"/>
+                <property name="date_released" renderingHint="label"/>
+                <property name="effectivity_text" renderingHint="label"/>
+                <break/>
+                <property name="owning_user" renderingHint="objectlink" modifiable="false"/>
+                <property name="owning_group" renderingHint="objectlink" modifiable="false"/>
+                <property name="last_mod_user"/>
+                <property name="checked_out" renderingHint="label"/>
+                <property name="checked_out_user"/>
+                <command commandId="com.teamcenter.rac.properties" titleKey="tc_xrt_moreProperties"/>
+            </section>
+            <inject type="dataset" src="S2clScalarRatingOverview"/>
+            <section titleKey="tc_xrt_ClassificationProperties">
+                <classificationProperties/>
+            </section>
+            <inject type="dataset" src="ProjectListInfo"/>
+        </column>
+        <column>
+            <view name="actions">
+                <command actionKey="copyAction" commandId="com.teamcenter.rac.copy"/>
+                <command actionKey="reviseAction" commandId="com.teamcenter.rac.revise"/>
+                <command actionKey="saveAsAction" commandId="org.eclipse.ui.file.saveAs"/>
+            </view>
+        </column>
+    </page>
+    <page titleKey="tc_xrt_viewer" visibleWhen="TC_Attaches!=null and ActiveWorkspace:SubLocation!=com.siemens.splm.client.occmgmt:OccurrenceManagementSubLocation">
+        <customPanel java="com.siemens.splm.client.docmgmt.galleryviewer.xrtViewer"/>
+    </page>
+	   <inject type="dataset" src="Awp0KPDocParticipantSummary"/>
+    <page titleKey="VO Attachments">
+        <section titleKey="tc_xrt_Files">
+            <objectSet source="TC_Attaches.Dataset" defaultdisplay="listDisplay" sortby="object_string" sortdirection="ascending">
+                <tableDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </tableDisplay>
+                <thumbnailDisplay/>
+                <treeDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </treeDisplay>
+                <listDisplay/>
+                <command actionKey="newBusinessObjectContextualAction" commandId="com.teamcenter.rac.common.AddNew" renderingHint="commandbutton"/>
+                <command actionKey="pasteAction" commandId="com.teamcenter.rac.viewer.pastewithContext" renderingHint="commandbutton"/>
+                <command actionKey="cutAction" commandId="org.eclipse.ui.edit.cut" renderingHint="commandbutton">
+                    <parameter name="localSelection" value="true"/>
+                </command>
+            </objectSet>
+        </section>
+    </page>
+    <page titleKey="web_whereused" visibleWhen="ps_parents!=null">
+        <section titleKey="tc_xrt_ParentAssemblies">
+            <objectSet source="ps_parents.ItemRevision" sortdirection="ascending" sortby="object_string" defaultdisplay="listDisplay">
+                <command commandId="com.teamcenter.rac.pse.sendto" titleKey="tc_xrt_OpenSelectedInStructureManager" renderingHint="commandbutton">
+                    <parameter value="true" name="localSelection"/>
+                </command>
+                <tableDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </tableDisplay>
+                <thumbnailDisplay/>
+                <treeDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </treeDisplay>
+                <listDisplay/>
+            </objectSet>
+        </section>
+    </page>
+    <page titleKey="FND_TraceLink" visibleWhen="has_trace_link==Y">
+        <section titleKey="tc_xrt_Defining">
+            <objectSet source="S2P:FND_TraceLink.WorkspaceObject" sortdirection="ascending" sortby="object_string" defaultdisplay="listDisplay">
+                <tableDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="relation"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </tableDisplay>
+                <thumbnailDisplay/>
+                <treeDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="relation"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </treeDisplay>
+                <listDisplay/>
+            </objectSet>
+        </section>
+        <section titleKey="tc_xrt_Complying">
+            <objectSet source="FND_TraceLink.WorkspaceObject" sortdirection="ascending" sortby="object_string" defaultdisplay="listDisplay">
+                <tableDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="relation"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </tableDisplay>
+                <thumbnailDisplay/>
+                <treeDisplay>
+                    <property name="object_string"/>
+                    <property name="object_type"/>
+                    <property name="relation"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </treeDisplay>
+                <listDisplay/>
+            </objectSet>
+        </section>
+        <command commandId="com.teamcenter.rac.traceabilityReport" text="tc_xrt_TraceabilityReport"/>
+    </page>
+    <page titleKey="tc_xrt_History">
+        <section title=" ">
+            <objectSet source="revision_list.ItemRevision" sortdirection="descending" sortby="object_string" defaultdisplay="tableDisplay">
+                <tableDisplay>
+                    <property name="object_string"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </tableDisplay>
+                <thumbnailDisplay/>
+                <treeDisplay>
+                    <property name="object_string"/>
+                    <property name="release_status_list"/>
+                    <property name="date_released"/>
+                    <property name="owning_user"/>
+                </treeDisplay>
+                <listDisplay/>
+            </objectSet>
+        </section>
+    </page>
+       <page titleKey="JIRA">
+        <section titleKey="JIRA Integration">
+                    <property name="kp2_JIRA_ID"/>
+                <break/>
+      <htmlPanel>  
+                <![CDATA[ <iframe height="600px" width="100%" src="https://knowledgepodiumsystems.atlassian.net/browse/{{selected.properties[‘kp2_JIRA_ID’]}}"> </iframe> ]]>
+        </htmlPanel>  
+        </section>
+    </page>
+    <inject type="dataset" src="WorkflowSummary" />
+       <page titleKey="JIRA">
+        <section titleKey="JIRA Integration">
+                    <property name="kp2_JIRA_ID"/>
+                <break/>
+      <htmlPanel>  
+                <![CDATA[ <iframe height="600px" width="100%" src="https://knowledgepodiumsystems.atlassian.net/browse/{{selected.properties[‘kp2_JIRA_ID’]}}"> </iframe> ]]>
+        </htmlPanel>  
+        </section>
+    </page>
+       <page titleKey="YouTube">
+        <section titleKey="Youtube">
+      <htmlPanel>  
+                <![CDATA[ <iframe width="854" height="480" src="https://www.youtube.com/embed/AiONtNwED-Y" frameborder="0" allowfullscreen></iframe> ]]>
+        </htmlPanel>  
+enablesizer="true"/>
+        </section>
+    </page>
+    <inject type="dataset" src="S2clItemRevSummary" />
+</rendering>
