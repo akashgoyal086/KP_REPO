@@ -1,0 +1,16 @@
+1) This utiltiy will run on teamcenter command prompt only
+2) MAke sure all csv files are updated accordingly
+3) Open TC cmd and run Create_POD_or_CAD_Assy.
+4) follow steps prompted on the console
+
+5) Update CSV instructions
+# item,name,Level
+where:
+item is Item id : NULLID always
+name : name of the item to be added
+Level :level at which this item is being added: values = 0, 1,2
+level 0= top assm
+level 1- child assm
+level 2 - child of level 1
+
+6) update existing Project id and pod/cad id in ADD_POD_CAD_TO_PROJ.csv
