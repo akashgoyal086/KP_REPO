@@ -1,0 +1,29 @@
+#DELIMITER ,,
+# item,name,Level
+NULLID,Quality Control,0
+NULLID,Introduction to Quality Control,1
+NULLID,Why quality is required,2
+NULLID,Need of Quality,2
+NULLID,Dimensions of Quality,2
+NULLID,Difference between QC and QA,2
+NULLID,Basics of Quality control,1
+NULLID,what is quality control,2
+NULLID,Objective of Quality control,2
+NULLID,Quality Control and Inspection,1
+NULLID,Objective of Inspection,2
+NULLID,Methods of Inspection,2
+NULLID,Tool Inspection,3
+NULLID,First piece inspection,3
+NULLID,Working inspection/In Progress Inspection,3
+NULLID,Sampling inspection,3
+NULLID,Final Inspection,3
+NULLID,Difference between QC and Inspection,2
+NULLID,Cost for Quality,1
+NULLID,What is Cost for quality,2
+NULLID,Different types of cost for Quality,2
+NULLID,Failure  Cost,2
+NULLID,Types of Failure Cost,2
+NULLID,Internal,3
+NULLID,External,3
+NULLID,Appraisal Cost,2
+NULLID,Preventive cost,2
