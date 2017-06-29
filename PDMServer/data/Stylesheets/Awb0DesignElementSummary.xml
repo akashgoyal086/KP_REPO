@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+// @<COPYRIGHT>@
+// ==================================================
+// Copyright 2015.
+// Siemens Product Lifecycle Management Software Inc.
+// All Rights Reserved.
+// ==================================================
+// @<COPYRIGHT>@
+-->
+<rendering>
+    <header>
+        <image source="type"/>
+        <property name="awb0Name"/>
+        <property name="awb0ArchetypeName"/>
+    </header>
+    <page titleKey="tc_xrt_Overview" format="TwoColumn">
+        <firstcolumn>
+            <section titleKey="tc_xrt_Properties">
+                <property name="awb0ArchetypeId"/>
+                <property name="awb0ArchetypeRevId"/>
+                <property name="awb0ArchetypeRevName"/>
+                <property name="awb0ArchetypeRevDescription"/>
+                <property name="awb0OccName"/>
+                <property name="awb0LogicalDesignator"/>
+                <property name="awb0Sequence"/>
+                <property name="kp2_SectorNameOcc"/>
+                <property name="awb0Quantity"/>
+                <property name="awb0UoM" renderingHint="lovcombobox"/>
+                <break/>
+                <property name="awb0ArchetypeRevRelStatus" renderingHint="label"/>
+                <property name="awb0ArchetypeRevReleaseDate" renderingHint="label"/>
+                <property name="awb0ArchetypeRevEffText" renderingHint="label"/>
+                <break/>
+                <property name="awb0ArchetypeRevOwningUser" renderingHint="objectlink" modifiable="false"/>
+                <property name="awb0ArchetypeRevOwningGroup" renderingHint="objectlink" modifiable="false"/>
+                <break/>
+                <property name="awb0ArchetypeRevLastModUser"/>
+                <property name="awb0Parent"/>
+                <property name="awb0NumberOfChildren"/>
+                <property name="awb0IsPrecise"/>
+             </section>
+             <inject type="dataset" src="S2clScalarRatingOverview"/>
+        </firstcolumn>
+        <secondcolumn>
+            <section titleKey="tc_xrt_Preview">
+                <image source="thumbnail"/>
+            </section>
+            <view name="actions">
+                <command actionKey="reviseAction" commandId="com.teamcenter.rac.revise"/>
+                <command actionKey="saveAsAction" commandId="org.eclipse.ui.file.saveAs"/>
+            </view>
+        </secondcolumn>
+    </page>
+</rendering>

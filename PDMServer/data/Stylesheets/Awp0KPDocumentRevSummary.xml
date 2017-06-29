@@ -26,6 +26,7 @@
                 <property name="object_desc"/>
                 <property name="kp2_Sector"/>
                 <property name="object_type"/>
+                <property name="DocumentSubject"/>
                 <property name="release_status_list" renderingHint="label"/>
                 <property name="date_released" renderingHint="label"/>
                 <property name="effectivity_text" renderingHint="label"/>

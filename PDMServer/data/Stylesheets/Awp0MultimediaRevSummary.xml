@@ -23,9 +23,10 @@
             <section titleKey="tc_xrt_properties">
                 <property name="item_id" renderingHint="label"/>
                 <property name="item_revision_id" renderingHint="label"/>
-	<break/>
+	
             	<property name="kp2_Sector"/>
-	<break/>
+	     <property name="kp2_SectorName"/>
+	
                     <property name="kp2_JIRA_ID"/>
                 <break/>
                 <property name="object_name"/>

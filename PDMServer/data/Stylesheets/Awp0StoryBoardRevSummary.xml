@@ -24,7 +24,7 @@
                 <property name="item_id" renderingHint="label"/>
                 <property name="item_revision_id" renderingHint="label"/>
 	<break/>
-            	<property name="kp2_Sector"/>
+            	  <property name="kp2_SectorName"/>
 	<break/>
                     <property name="kp2_JIRA_ID"/>
                 <break/>
