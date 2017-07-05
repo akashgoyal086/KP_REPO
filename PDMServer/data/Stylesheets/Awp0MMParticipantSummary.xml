@@ -1,0 +1,84 @@
+<subRendering>
+    <page titleKey="Participants">
+	
+        <content visibleWhen="awp0ShowParticipants==KP2_Creator">
+            <section titleKey="Creator">
+                <objectSet source="HasParticipant.KP2_Creator" defaultdisplay="tableDisplay"> 
+             
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_Creator">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+        
+		
+        
+		
+		
+            <section titleKey="Reviewers">
+                <objectSet source="HasParticipant.KP2_MMLead"  defaultdisplay="tableDisplay"> 
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>               
+<objectSet source="HasParticipant.KP2_PODLead"  defaultdisplay="tableDisplay"> 
+                    
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>               
+            </section>
+       
+			
+            <section titleKey="Approvers">
+             <objectSet source="HasParticipant.KP2_SME"  defaultdisplay="tableDisplay"> 
+                 
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>               
+<objectSet source="HasParticipant.KP2_QA"  defaultdisplay="tableDisplay">                     
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet> 
+           
+            </section>
+     
+		
+    </page>
+</subRendering>

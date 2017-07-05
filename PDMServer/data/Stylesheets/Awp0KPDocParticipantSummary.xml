@@ -1,0 +1,87 @@
+<subRendering>
+    <page titleKey="Participants">
+	
+        <content visibleWhen="awp0ShowParticipants==KP2_TeamLead">
+            <section titleKey="Team Lead">
+                <objectSet source="HasParticipant.KP2_TeamLead" defaultdisplay="tableDisplay"> 
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.addParticipant" renderingHint="commandbutton"/>
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.replaceParticipant" renderingHint="commandbutton"/>
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_TeamLead">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+        <content visibleWhen="awp0ShowParticipants==KP2_ResponsibleParty">
+            <section titleKey="Responsible Person">
+                <objectSet source="HasParticipant.KP2_ResponsibleParty" defaultdisplay="tableDisplay"> 
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.addParticipant" renderingHint="commandbutton"/>
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.replaceParticipant" renderingHint="commandbutton"/>
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_ResponsibleParty">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+		
+			        <content visibleWhen="awp0ShowParticipants==KP2_Reviewer">
+            <section titleKey="Reviewers">
+                <objectSet source="HasParticipant.KP2_Reviewer" defaultdisplay="tableDisplay"> 
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.addParticipant" renderingHint="commandbutton"/>
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.replaceParticipant" renderingHint="commandbutton"/>
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_Reviewer">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+			        <content visibleWhen="awp0ShowParticipants==KP2_Approver">
+            <section titleKey="Approvers">
+                <objectSet source="HasParticipant.KP2_Approver" defaultdisplay="tableDisplay"> 
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.addParticipant" renderingHint="commandbutton"/>
+                    <command actionKey="newBusinessObjectContextualAction" commandId="com.siemens.splm.client.workflow.replaceParticipant" renderingHint="commandbutton"/>
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_Approver">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+		
+    </page>
+</subRendering>
