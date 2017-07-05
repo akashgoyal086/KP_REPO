@@ -1,0 +1,1 @@
+C:\Users\TCAdmin\Desktop\UpdateUtility\ips_data_upload_tc10_1_64bit_nti_11_2_0.exe -u=tcadmin -p=tcadmin1 -m=items -i=C:\Users\TCAdmin\Desktop\UpdateUtility\riceplanter.csv -o=C:\Users\TCAdmin\Desktop\UpdateUtility\riceplanter_log.log 

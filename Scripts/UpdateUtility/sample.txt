@@ -1,0 +1,5 @@
+ITEM TYPE = KP2_CADDesignRevision
+UPDATE ITEMS = ON 
+!~ItemID~Name
+PD-000921~NewName1
+PD-000922~NewName2

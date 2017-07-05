@@ -1,0 +1,158 @@
+Log file for user 'tcadmin' started on Mon Jul 03 13:35:32 2017
+
+I P S   G E N E R I C   D A T A   U P L O A D
+  VERSION   11_2_0   (Compiled Dec  3 2014 17:14:03)
+
+Teamcenter Version: Teamcenter V11000.2.2.20_20160504.00 (64bit)
+Process PID: 11392
+
+Command Line Settings:
+
+[CLA] -i=<Input File>                     =  [C:\Users\Administrator\Desktop\assm\UpdateUtility\sample.txt]
+[CLA] -u=<User>                           =  [tcadmin]
+[CLA] -g=<Group>                          =  [dba]
+[CLA] -m=<Program Mode>                   =  [ITEMS]
+
+Configuration settings:
+
+  << GENERAL Settings >>
+
+     Program Mode   (-m=)                =  [ITEMS]
+     Config File    (-cfg=)            
+     Input File     (-i=)                =  [C:\Users\Administrator\Desktop\assm\UpdateUtility\sample.txt]
+     Output File    (-o=)                =  [C:\Users\Administrator\Desktop\assm\UpdateUtility\sample_log.log]
+     Repeat File    (-r=)                =  [C:\Users\Administrator\Desktop\assm\UpdateUtility\sample.rep]
+     Report File    (-report_file=)    
+     Auto Login     (-noautologin)     
+     Verbose Output (-v)                 =  [OFF]
+     LOG FILE FORMATS (CSV[,DELIM])    
+     SET BYPASS (ON|OFF)               
+     ITEM TYPE                           =  [KP2_CADDesignRevision]
+     DEFAULT REV                         =  [A]
+     FOLDER NAME                       
+     GLOBAL FOLDER SEARCH                =  [OFF]
+     DEFAULT OWNER                     
+     DEFAULT GROUP                     
+     SET OWNER BY PARENT                 =  [OFF]
+     DATE FORMAT                         =  [%d-%b-%Y %H:%M]
+     NEWLINE TOK                         =  [%#10;]
+     WILDCARD CHAR MULTI               
+     WILDCARD CHAR SINGLE              
+     UPDATE MODIFY DATES                 =  [OFF]
+     DEFAULT OWNING SITE               
+     UPDATE REMOTE OBJECTS               =  [OFF]
+     TRUNCATE NAMES                      =  [OFF]
+     CREATE CICO                         =  [OFF]
+     UPDATE CICO (CHECK IN|CHECK OUT|CANCEL CHECK OUT|OFF)  =  [OFF]
+     CICO OBJECTS FILTER               
+     CHECK OUT REASON                    =  [Checked-Out by IPS_DATA_UPLOAD]
+     MULTI VALUE SEPARATOR STRING        =  [,]
+     VALUE FILES ROOT DIR              
+     New in 8.0.1...                   
+     CHECK PROP LENGTHS                  =  [ON]
+     New in 8.1.0... (VALIDATION)      
+     DATA VALIDATION                     =  [OFF]
+     DATA VALIDATION IMPORT              =  [ON]
+     DATA VALIDATION IMPORT FOLDER     
+     DATA VALIDATION LINE COUNT          =  [1]
+     Field validation report file      
+     New in 8.2.0...                   
+     GROUP MEMBER MAIN SEPARATOR         =  [/]
+     GROUP MEMBER MULTI VALUE SEPARATOR  =  [,]
+     New in 8.2.0...                   
+     BYPASS LOGOUT                       =  [OFF]
+     New in 9.2.0...                   
+     SET COLON PROPS WITH POM          
+     New in 10.0.1...                  
+     TC DATE FORMAT                      =  [%d-%b-%Y %H:%M]
+     New in 10.5.0...                  
+     DEFAULT LANGUAGE                  
+     DEFAULT LANGUAGE STATUS             =  [APPROVED]
+     New in 10.11.0...                 
+     FIND FIELD DATA SEPARATOR           =  [,]
+     New in 11.2.0...                  
+     RESOURCE POOL MAIN SEPARATOR        =  [/]
+     RESOURCE POOL MULTI VALUE SEPARATOR  =  [,]
+     RESOURCE POOL ALLOW SUB GROUPS      =  [ON]
+
+  << ITEM Settings >>
+
+     CREATE ITEMS                        =  [ON]
+     CREATE REVS                         =  [ON]
+     UPDATE ITEMS                        =  [ON]
+     UPDATE REVS                         =  [OFF]
+     UPDATE LATEST REV                   =  [OFF]
+                                            [= ON | OFF | ONLY]
+     ITEM REV RULE                     
+     AUTO GENERATE ITEM ID               =  [OFF]
+     AUTO GENERATE BASIC ITEM ID         =  [OFF]
+     USE ITEMS WITH DIFF CASE            =  [ON]
+     UPDATE ITEM ATTACHMENTS             =  [ON]
+     UPDATE REV ATTACHMENTS              =  [ON]
+     UPDATE ITEM ATTACHMENT RELATIONS  
+     UPDATE REV ATTACHMENT RELATIONS   
+     CREATE STATUS                       =  [ON]
+     UPDATE STATUS                       =  [LAST]
+     RELEASE STATUS                    
+     UPDATE STATUS NAME                
+     USE PARENT STATUS                   =  [OFF]
+     RELEASE OBJECTS FILTER            
+     RELEASE ITEM                        =  [OFF]
+     BASED ON STATUS                   
+     RELEASE BASED ON ITEM               =  [OFF]
+     UPDATE REVS ATTACHS STATUS          =  [ON]
+     RELEASE RELATIONS                   =  [IMAN_specification]
+     RELEASE DATASET RELATIONS           =  [ON]
+     RELEASE NAMED REFERENCES            =  [ON]
+     ITEM RELEASE RELATIONS            
+     REV RELEASE RELATIONS             
+     DATASET RELEASE RELATIONS         
+     PURGE DATASET VERSIONS ON RELEASE   =  [OFF]
+     UNRELEASE ITEMS                     =  [OFF]
+     UNRELEASE REVS                      =  [ON]
+     UNRELEASE DATASET REFERENCES        =  [ON]
+     UNRELEASE NAMED REFERENCES          =  [ON]
+     UNRELEASE KEEP LAST                 =  [OFF]
+     New in 8.2.0...                   
+     EFFECTIVITY UPDATE OPTION           =  [REPLACE]
+     New in 9.1.0...                   
+     ALLOW REPEAT ITEM AND REV LINES     =  [OFF]
+     New in 10.0.0...                  
+     SEARCH FOR ITEMS BY               
+     MATCH ITEM BY NAME AND ID           =  [OFF]
+     New in 10.10.0...                 
+     CREATE REV SEQS                     =  [OFF]
+     UPDATE REV SEQS                     =  [OFF]
+     SET PREV REV SEQ IMMUNE             =  [OFF]
+
+
+TIMING: Seconds to Initialise     : 0.31
+
+Line  Action Obj Type                  Obj Name                  Status                    - Notes
+===================================================================================================
+(0004)[0001] KP2_CADDesignRevision     PD-000921                 ITEM FOUND, ITEM UPDATED  - 
+(0005)[0002] KP2_CADDesignRevision     PD-000922                 ITEM FOUND, ITEM ACCESS DENIED -  (Errno 1)
+	--------------------------------------------------
+	ERROR (1): [5, 2] ITEM ACCESS DENIED
+	--------------------------------------------------
+
+
+[5] total lines read
+TIMING: Total data lines read     : 2
+TIMING: Total seconds import time : 0.14
+TIMING: Seconds per data line     : 0.07
+
+Summary Report
+==============
+
+[1] lines written to repeat file [C:\Users\Administrator\Desktop\assm\UpdateUtility\sample.rep]
+
+Items            CREATED          - Successfully: [0], 	Failed: [0], Errors: [0]
+Items            UPDATED          - Successfully: [1], 	Failed: [1]
+Revs             CREATED          - Successfully: [0], 	Failed: [0], Errors: [0]
+
+Log file for user 'tcadmin' finished on Mon Jul 03 13:35:33 2017
+
+
+Finished with [1] error(s)!
+Finished with [0] warnings(s)!
