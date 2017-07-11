@@ -118,6 +118,58 @@ static int report_error(char *file, int line, char *call, int status,
 
 
 
+extern DLLAPI int Validate_Document_handler(EPM_action_message_t message)
+{
+	
+	tag_t    root_task = NULLTAG;
+	int    n_attachments = 0;	
+	tag_t    *attachments = NULL;
+	int stat =0;
+	int pCount =0;
+	char targetObjectType[100];
+	char* szDocumentSubject = NULL;
+	
+	TC_write_syslog("calling Validate_Document_handler\n");
+	ERROR_CHECK(EPM_ask_root_task( message.task, &root_task));
+    
+    TC_write_syslog("KP_INFO:  root_task = %d\n", root_task);    
+
+    ERROR_CHECK(EPM_ask_attachments(root_task, EPM_target_attachment,
+        &n_attachments, &attachments));
+	if (n_attachments == 0) return 1;  // fail
+	for(pCount = 0;pCount<n_attachments;pCount++)
+
+		{
+
+	WSOM_ask_object_type(attachments[pCount],targetObjectType);
+	TC_write_syslog("KP_INFO:  targetObjectType = %s\n", targetObjectType); 
+	if(tc_strcmp(targetObjectType, "KP2_DocumentRevision")==0)
+	{
+	ERROR_CHECK(AOM_ask_value_string(attachments[pCount], "DocumentSubject",&szDocumentSubject));
+    TC_write_syslog("KP_INFO:  szDocumentSubject = %s\n", szDocumentSubject); 
+	if(tc_strcmp(szDocumentSubject,"Scope Document")==0)
+	{
+		stat = 11;
+	}
+	if(tc_strcmp(szDocumentSubject,"High Level Design")==0)
+	{
+		stat = 12;
+	}
+	if(tc_strcmp(szDocumentSubject,"ContentDocument")==0||(tc_strcmp(szDocumentSubject,"Content Document")==0))
+	{
+		stat = 13;
+	}
+	
+	
+	}
+		}	
+    
+	
+		if (attachments) MEM_free(attachments);
+			if (szDocumentSubject) MEM_free(szDocumentSubject);
+	return stat;
+}
+
 extern DLLAPI int GTAC_action_handler(EPM_action_message_t message)
 {
 int reworkGroupCount =0;
@@ -137,19 +189,22 @@ int 		ifail1 = ITK_ok;
 int 		n_attachs = 0;
 int 		participant_count =0;
 int 		resp_participant_count =0;
+int 		doc_participant_count =0;
+
 int 		subtaskCount=0;
 int 		currentTaskCount=0;
 int 		task_count=0;
+int         number_found = 0;
 char* 		job_tag_string = NULL;
 
 char  		type[WSO_name_size_c + 1] = "";
 char  		performerType[WSO_name_size_c + 1] = "";
 
-char*        kp2_projRevID;
+char*        kp2_projRevID = NULL;
 char        inputFile[1250]= "C:\\Temp\\KP_EMAIL_NOTIFY_creators";
 char		directoryPath[1250]		= {'\0'};
 char 		native_file_spec[250]	= {'\0'};
-
+char* 		szDocumentSubject = NULL;
 char  		typeOfSelObj[WSO_name_size_c + 1]="";
 char  		typeOfTASKSelObj[WSO_name_size_c + 1]="";
 char  		typeOfProjrevObj[WSO_name_size_c + 1]="";
@@ -160,6 +215,7 @@ char        quotes[SA_person_name_size_c+1] = "\"";
 char        initiator_person_name[SA_person_name_size_c+1] = "";
 char 		str_value1[100] = {'\0'};
 char 		str_value2[100] = {'\0'};
+char 		str_value3[100] = {'\0'};
 char 		*charArray[3][10] = {'\0'};
 char 		taskType_str_value[100] = {'\0'};
 //char		*str_value = NULL;
@@ -196,6 +252,7 @@ char *ch;
 char 	process_name[WSO_name_size_c+1]	="" ;
 int 	num_of_members;
 tag_t * member_tags=NULL;
+tag_t * cad_member_tags = NULL;
 
 
 
@@ -216,7 +273,11 @@ tag_t group_tag1 = NULLTAG;
 tag_t group_tag2 = NULLTAG;
 
 tag_t		responsible_participant_type = NULLTAG;
+tag_t		creation_participant_type = NULLTAG;
+
 tag_t		participant = NULLTAG;
+tag_t		CAD_participant = NULLTAG;
+
 tag_t tSubTaskPerformer = NULLTAG;
 tag_t 		*szSubTask = NULLTAG;
 tag_t 		job_tag = NULLTAG;
@@ -227,6 +288,7 @@ tag_t 		projRevTag=NULLTAG;
 tag_t		participant_type = NULLTAG;
 tag_t*      participant_list= NULLTAG;
 tag_t*      resp_participant_list= NULLTAG;
+tag_t*      doc_participant_list= NULLTAG;
 tag_t 		member_tag = NULLTAG;
 tag_t 		member_user_tag = NULLTAG;
 tag_t 		rework_member_user_tag = NULLTAG;
@@ -237,6 +299,8 @@ tag_t  		role_tag= NULLTAG;
 tag_t		 person_tag = NULLTAG;
 tag_t       * task_list=NULLTAG;
 logical  	is_default_role=false;
+logical  	szSendEmail=false;
+
 FILE *fptr;
 TC_preference_search_scope_t original_scope;
 fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
@@ -263,6 +327,7 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 			tc_strcpy(charArray[i],str_value2);
 			valueCnt++;
 			}
+			
 			if(tc_strcmp(flag ,"taskType") == 0)
 			tc_strcpy(taskType_str_value,value);
 		
@@ -373,7 +438,14 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 				
 				ERROR_CHECK(EPM_create_participant(member_tags[reworkGroupCount],responsible_participant_type,&participant ));
 	
-	
+				if(participant!=NULL)
+				{
+					fprintf(fptr,"KP_INFO: Particpant tag is NULL\n\n");
+				}
+				else
+				{
+					fprintf(fptr,"KP_INFO: Particpant tag is NOTTTT NULL\n\n");
+				}
 	
 	}
 	}
@@ -433,19 +505,26 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 					
 					//check if the particpant is avaiable else -- remove fisrt,then add, else dirextly add.
 					ITEM_rev_ask_participants(revTag,responsible_participant_type,&resp_participant_count,&resp_participant_list);
+					
 					fprintf(fptr,"KP_INFO:  resp_participant_count = %d\n", resp_participant_count);
 						//ITEM_rev_remove_participant(revTag,participant);	
-						if(resp_participant_count>0)
+						if(resp_participant_count>0  )
 						{
 							for(icount=0;icount<resp_participant_count;icount++)
 							{
-							ITEM_rev_remove_participant(revTag,resp_participant_list[icount]);	
+								
+							//ifail = ITEM_rev_remove_participant(revTag,resp_participant_list[icount]);	
+							//fprintf(fptr,"KP_INFO:  entering for  = %d\n", ifail);
 							
 							}
-							ITEM_rev_add_participant(revTag,participant);
+							
+							//ifail = ITEM_rev_add_participant(revTag,participant);
+							//fprintf(fptr,"KP_INFO:  ITEM_rev_add_participant in for ifail  = %d\n", ifail);
 						}
 						else{
-							(ITEM_rev_add_participant(revTag,participant));
+							
+							ifail = (ITEM_rev_add_participant(revTag,participant));
+							fprintf(fptr,"KP_INFO:  resp_participant_count in else = %d\n", ifail);
 						}
 						
 						
@@ -558,6 +637,8 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 					
 			ERROR_CHECK(SA_ask_person_email_address	(person_tag,&email_address));
 				fprintf(fptr,"KP_INFO: email_address= %s\n", email_address);	
+				fprintf(fptr,"KP_INFO check: taskType_str_value= %s\n", taskType_str_value);	
+				fprintf(fptr,"KP_INFO check: typeOfSelObj= %s\n", typeOfSelObj);	
 				
 				if(sizeof(email_address)<1)
 				{
@@ -581,6 +662,7 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 				(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
 				(ITEM_rev_add_participant(revTag,participant_list[iii]));		
 				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
+				
 				
 				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES\n");	
 				fprintf(fptr,"KP_INFO: item_id %s\n", item_id);	
@@ -1316,7 +1398,7 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 				
 				}
 				
-			}
+			
 			
 			
 				/******************************************************************************************/
@@ -1332,12 +1414,21 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 					||((tc_strcmp(typeOfSelObj,"KP2_CADDesignRevision")==NULL)&&(tc_strcmp(rolename,"CAD COE")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL)))		
 			
 				{
-				fprintf(fptr,"INFO: adding  member_user_role name for CAD Revision = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+					ifail  = EPM_get_participanttype("KP2_Creator",&creation_participant_type);
+					fprintf(fptr,"KP_INFO:  creation_participant_type = %d %d\n", creation_participant_type, ifail);  
+					//ifail = SA_find_groupmember_by_rolename	(	"CAD Lead","ProductDevelopment","bbiswas",&number_found,&cad_member_tags);
+					fprintf(fptr,"KP_INFO:  SA_find_groupmember_by_rolename = %d\n", ifail);  
+					ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+						fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  
+				//fprintf(fptr,"INFO: adding  member_user_role name %s for CAD Revision  and typeOfSelObj %s\n", rolename, typeOfSelObj);	
 					ERROR_CHECK(AOM_ask_value_string(revTag,"object_name" ,&szItemName));
 					fprintf(fptr,"KP_INFO:  szItemName is :: = %s\n", szItemName);
 					TC_write_syslog("Writing to Syslog\n");
-				(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
-			 (ITEM_rev_add_participant(revTag,participant_list[iii]));		
+				(ITEM_rev_remove_participant(revTag,CAD_participant));	
+				(ITEM_rev_add_participant(revTag,CAD_participant));
+		 fprintf(fptr,"KP_INFO:  ITEM_rev_add_participant for cad creation is :: = %d\n", ifail);
+			//	ifail = AOM_save(revTag);
+			//	fprintf(fptr,"KP_INFO: AOM_save ifail is :: = %d\n", ifail);
 			//TC_write_syslog("Writing to Syslog end\n");
 			//fprintf(fptr,"KP_INFO:  ifail1 is :: = %d\n", ifail1);
 				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
@@ -1396,9 +1487,15 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 				if(((tc_strcmp(typeOfSelObj,"KP2_CADDesignRevision")==NULL)&&(tc_strcmp(rolename,"CAD Lead")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL)))		
 			
 				{
-				fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
-				(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
-				(ITEM_rev_add_participant(revTag,participant_list[iii]));		
+				//fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+				ifail  = EPM_get_participanttype("KP2_CADLead",&creation_participant_type);
+				
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 
+				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
 				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
 				
 				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES\n");	
@@ -1456,9 +1553,27 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 					||((tc_strcmp(typeOfSelObj,"KP2_CADDesignRevision")==NULL)&&(tc_strcmp(rolename,"SME")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL)))		
 			
 				{
-				fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
-				(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
-				(ITEM_rev_add_participant(revTag,participant_list[iii]));
+				//fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+				
+				//(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
+				if(tc_strcmp(rolename,"POD Owner")==NULL)
+				{	
+				ifail  = EPM_get_participanttype("KP2_PODOwner",&creation_participant_type);
+				}
+				if(tc_strcmp(rolename,"SME")==NULL)
+				{	
+				ifail  = EPM_get_participanttype("KP2_SME",&creation_participant_type);
+				}
+				
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 
+				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				
+				
+				//(ITEM_rev_add_participant(revTag,participant_list[iii]));
 				
 				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
 				
@@ -1511,6 +1626,508 @@ fptr = fopen("C:\\Temp\\GTAC_register_action_handler_callbacks.log", "w");
 				tc_strcpy(szStart, "Start ");				
 				
 				}
+				
+				
+				/******************************************************************************************/
+				/**Begin story board revision 
+				/******************************************************************************************/
+				
+				
+				
+				//Begin adding particpant for CREATION for KP2_StoryBoardRevision 
+				if(((tc_strcmp(typeOfSelObj,"KP2_StoryBoardRevision")==NULL)&&(tc_strcmp(rolename,"Story Writer")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL)))		
+			
+				{
+					ifail  = EPM_get_participanttype("KP2_Creator",&creation_participant_type);
+					fprintf(fptr,"KP_INFO:  creation_participant_type = %d %d\n", creation_participant_type, ifail);  
+					//ifail = SA_find_groupmember_by_rolename	(	"CAD Lead","ProductDevelopment","bbiswas",&number_found,&cad_member_tags);
+					fprintf(fptr,"KP_INFO:  SA_find_groupmember_by_rolename = %d\n", ifail);  
+					ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+						fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  
+				//fprintf(fptr,"INFO: adding  member_user_role name %s for CAD Revision  and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+					ERROR_CHECK(AOM_ask_value_string(revTag,"object_name" ,&szItemName));
+					fprintf(fptr,"KP_INFO:  szItemName is :: = %s\n", szItemName);
+					TC_write_syslog("Writing to Syslog\n");
+				(ITEM_rev_remove_participant(revTag,CAD_participant));	
+				(ITEM_rev_add_participant(revTag,CAD_participant));
+		 fprintf(fptr,"KP_INFO:  ITEM_rev_add_participant for cad creation is :: = %d\n", ifail);
+			//	ifail = AOM_save(revTag);
+			//	fprintf(fptr,"KP_INFO: AOM_save ifail is :: = %d\n", ifail);
+			//TC_write_syslog("Writing to Syslog end\n");
+			//fprintf(fptr,"KP_INFO:  ifail1 is :: = %d\n", ifail1);
+				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES\n");	
+				fprintf(fptr,"KP_INFO: item_id %s\n", item_id);	
+				fprintf(fptr,"KP_INFO: email_address %s\n", email_address);	
+				fprintf(fptr,"KP_INFO: szProjectName %s\n", szProjectName);	
+				fprintf(fptr,"KP_INFO: szItemName %s\n", szItemName);	
+				fprintf(fptr,"KP_INFO: typeOfSelObj %s\n", typeOfSelObj);	
+				fprintf(fptr,"KP_INFO: person_name %s\n", person_name);	
+				fprintf(fptr,"KP_INFO: taskType_str_value %s\n", taskType_str_value);	
+				fprintf(fptr,"KP_INFO: initiator_person_name %s\n", initiator_person_name);					
+		
+				tc_strcat(szStart,"C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ");			
+				tc_strcat(szStart, item_id);
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, email_address);		
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szProjectName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szItemName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, typeOfSelObj);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, person_name);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, taskType_str_value);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, initiator_person_name);
+				tc_strcat(szStart, "\"");				
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING START VARIABLE\n");	
+				fprintf(fptr,"KP_INFO: szStart %s\n", szStart);
+				
+				//sprintf(native_file_spec, "%s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",person_name,email_address,szProjectName,item_id,szItemName,typeOfSelObj,szTaskName, szInitiatorName);	
+				//sprintf(native_file_spec, "%s %s %s %s %s %s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",item_id,email_address,szProjectName,szItemName,typeOfSelObj,person_name,szTaskName,initiator_person_name);	
+				system (szStart);
+				
+				tc_strcpy(szStart, "Start ");				
+				
+				}
+				
+					//Begin adding particpant for REVIEW for KP2_CADDesignRevision 
+				if(((tc_strcmp(typeOfSelObj,"KP2_StoryBoardRevision")==NULL)&&(tc_strcmp(rolename,"POD Lead")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL)))		
+			
+				{
+				//fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+				ifail  = EPM_get_participanttype("KP2_PODLead",&creation_participant_type);
+				
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 
+				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES\n");	
+				fprintf(fptr,"KP_INFO: item_id %s\n", item_id);	
+				fprintf(fptr,"KP_INFO: email_address %s\n", email_address);	
+				fprintf(fptr,"KP_INFO: szProjectName %s\n", szProjectName);	
+				fprintf(fptr,"KP_INFO: szItemName %s\n", szItemName);	
+				fprintf(fptr,"KP_INFO: typeOfSelObj %s\n", typeOfSelObj);	
+				fprintf(fptr,"KP_INFO: person_name %s\n", person_name);	
+				fprintf(fptr,"KP_INFO: taskType_str_value %s\n", taskType_str_value);	
+				fprintf(fptr,"KP_INFO: initiator_person_name %s\n", initiator_person_name);					
+		
+				tc_strcat(szStart,"C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ");			
+				tc_strcat(szStart, item_id);
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, email_address);		
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szProjectName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szItemName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, typeOfSelObj);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, person_name);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, taskType_str_value);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, initiator_person_name);
+				tc_strcat(szStart, "\"");				
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING START VARIABLE\n");	
+				fprintf(fptr,"KP_INFO: szStart %s\n", szStart);
+				
+				//sprintf(native_file_spec, "%s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",person_name,email_address,szProjectName,item_id,szItemName,typeOfSelObj,szTaskName, szInitiatorName);	
+				//sprintf(native_file_spec, "%s %s %s %s %s %s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",item_id,email_address,szProjectName,szItemName,typeOfSelObj,person_name,szTaskName,initiator_person_name);	
+				system (szStart);
+				
+				tc_strcpy(szStart, "Start ");				
+				
+				}
+				
+				//Begin adding particpant for APPROVAL for KP2_StoryBoardRevision 
+				if(((tc_strcmp(typeOfSelObj,"KP2_StoryBoardRevision")==NULL)&&(tc_strcmp(rolename,"POD Owner")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL))
+					||((tc_strcmp(typeOfSelObj,"KP2_StoryBoardRevision")==NULL)&&(tc_strcmp(rolename,"SME")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL)))		
+			
+				{
+				//fprintf(fptr,"INFO: adding  member_user_role name = %s and typeOfSelObj %s\n", rolename, typeOfSelObj);	
+				
+				//(ITEM_rev_remove_participant(revTag,participant_list[iii]));	
+				if(tc_strcmp(rolename,"POD Owner")==NULL)
+				{	
+				ifail  = EPM_get_participanttype("KP2_PODOwner",&creation_participant_type);
+				}
+				if(tc_strcmp(rolename,"SME")==NULL)
+				{	
+				ifail  = EPM_get_participanttype("KP2_SME",&creation_participant_type);
+				}
+				
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 
+				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				
+				
+				//(ITEM_rev_add_participant(revTag,participant_list[iii]));
+				
+				//ERROR_CHECK(EPM_ask_assigned_tasks( member_user_tag, EPM_inbox_query, &task_count, &task_list ));	
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES\n");	
+				fprintf(fptr,"KP_INFO: item_id %s\n", item_id);	
+				fprintf(fptr,"KP_INFO: email_address %s\n", email_address);	
+				fprintf(fptr,"KP_INFO: szProjectName %s\n", szProjectName);	
+				fprintf(fptr,"KP_INFO: szItemName %s\n", szItemName);	
+				fprintf(fptr,"KP_INFO: typeOfSelObj %s\n", typeOfSelObj);	
+				fprintf(fptr,"KP_INFO: person_name %s\n", person_name);	
+				fprintf(fptr,"KP_INFO: taskType_str_value %s\n", taskType_str_value);	
+				fprintf(fptr,"KP_INFO: initiator_person_name %s\n", initiator_person_name);					
+		
+				tc_strcat(szStart,"C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ");			
+				tc_strcat(szStart, item_id);
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, email_address);		
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szProjectName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szItemName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, typeOfSelObj);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, person_name);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, taskType_str_value);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, initiator_person_name);
+				tc_strcat(szStart, "\"");				
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING START VARIABLE\n");	
+				fprintf(fptr,"KP_INFO: szStart %s\n", szStart);
+				
+				//sprintf(native_file_spec, "%s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",person_name,email_address,szProjectName,item_id,szItemName,typeOfSelObj,szTaskName, szInitiatorName);	
+				//sprintf(native_file_spec, "%s %s %s %s %s %s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",item_id,email_address,szProjectName,szItemName,typeOfSelObj,person_name,szTaskName,initiator_person_name);	
+				system (szStart);
+				
+				tc_strcpy(szStart, "Start ");				
+				
+				}
+				
+				
+				fprintf(fptr,"KP_INFO: Begin adding particpant for CREATION for KP2_DocumentRevision \n");	
+				fprintf(fptr,"KP_INFO: typeOfSelObj %s \n", typeOfSelObj);	
+				fprintf(fptr,"KP_INFO: rolename %s \n", rolename);
+				fprintf(fptr,"KP_INFO: taskType_str_value %s \n", taskType_str_value);
+				
+				if(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)
+				{
+				fprintf(fptr,"KP_INFO:  checking document subject\n");				
+				ERROR_CHECK(AOM_ask_value_string(revTag, "DocumentSubject",&szDocumentSubject));
+				fprintf(fptr,"KP_INFO:  szDocumentSubject = %s\n", szDocumentSubject);			
+				
+					
+				//Begin adding particpant for CREATION for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"Scope Document")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"SME")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Creator",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"Scope Document")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Owner")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Reviewer",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"Scope Document")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Mgmt")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Approver",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				if((tc_strcmp(szDocumentSubject,"High Level Design")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Lead")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Creator",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"High Level Design")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Owner")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL)
+					||(tc_strcmp(szDocumentSubject,"High Level Design")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"SME")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL))					
+				{
+					if(tc_strcmp(rolename,"SME")==NULL)
+				{	
+				ifail  = EPM_get_participanttype("KP2_Reviewer",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				if(tc_strcmp(rolename,"POD Owner")==NULL)
+				{					
+				ifail  = EPM_get_participanttype("KP2_Reviewer",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"High Level Design")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Mgmt")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Approver",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				if((tc_strcmp(szDocumentSubject,"ContentDocument")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"Content Lead")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL)
+					||(tc_strcmp(szDocumentSubject,"ContentDocument")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"Content Dev")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL)
+				||(tc_strcmp(szDocumentSubject,"ContentDocument")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"Content Developer")==NULL)&&(tc_strcmp(taskType_str_value,"Creation")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Creator",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"ContentDocument")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"SME")==NULL)&&(tc_strcmp(taskType_str_value,"REVIEW")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Reviewer",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				
+				//Begin adding particpant for APPROVAL for KP2_DocumentRevision 
+				if((tc_strcmp(szDocumentSubject,"ContentDocument")==NULL)&&(tc_strcmp(typeOfSelObj,"KP2_DocumentRevision")==NULL)&&(tc_strcmp(rolename,"POD Mgmt")==NULL)&&(tc_strcmp(taskType_str_value,"APPROVAL")==NULL))					
+				{
+				ifail  = EPM_get_participanttype("KP2_Approver",&creation_participant_type);	
+				fprintf(fptr,"KP_INFO:  EPM_get_participanttype = %d\n", ifail); 				
+				ifail = EPM_create_participant(member_tag,creation_participant_type,&CAD_participant );
+				fprintf(fptr,"KP_INFO:  EPM_create_participant = %d\n", ifail);  				
+				ERROR_CHECK(ITEM_rev_ask_participants(revTag,creation_participant_type,&doc_participant_count,&doc_participant_list)); 
+				if(doc_participant_count>0)
+				{
+				(ITEM_rev_remove_participant(revTag,CAD_participant));
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				else
+				{
+				(ITEM_rev_add_participant(revTag,CAD_participant));		
+				}
+				szSendEmail = true;
+				}
+				
+				if(szSendEmail)
+				{
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING VARIABLES for document\n");	
+				fprintf(fptr,"KP_INFO: item_id %s\n", item_id);	
+				fprintf(fptr,"KP_INFO: email_address %s\n", email_address);	
+				fprintf(fptr,"KP_INFO: szProjectName %s\n", szProjectName);	
+				fprintf(fptr,"KP_INFO: szItemName %s\n", szItemName);	
+				fprintf(fptr,"KP_INFO: typeOfSelObj %s\n", typeOfSelObj);	
+				fprintf(fptr,"KP_INFO: person_name %s\n", person_name);	
+				fprintf(fptr,"KP_INFO: taskType_str_value %s\n", taskType_str_value);	
+				fprintf(fptr,"KP_INFO: initiator_person_name %s\n", initiator_person_name);					
+		
+				tc_strcat(szStart,"C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ");			
+				tc_strcat(szStart, item_id);
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, email_address);		
+				tc_strcat(szStart, szSpace);	
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szProjectName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szItemName);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, typeOfSelObj);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, person_name);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, taskType_str_value);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, szSpace);
+				tc_strcat(szStart, "\"");
+				tc_strcat(szStart, initiator_person_name);
+				tc_strcat(szStart, "\"");				
+				
+				fprintf(fptr,"KP_INFO: BEGIN PRINTING START VARIABLE\n");	
+				fprintf(fptr,"KP_INFO: szStart %s\n", szStart);
+				
+				//sprintf(native_file_spec, "%s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",person_name,email_address,szProjectName,item_id,szItemName,typeOfSelObj,szTaskName, szInitiatorName);	
+				//sprintf(native_file_spec, "%s %s %s %s %s %s %s %s","C:\\Apps\\plm\\tcroot\\local\\ProjectLifeCycle\\KP_BATCH\\KP_Master.bat ",item_id,email_address,szProjectName,szItemName,typeOfSelObj,person_name,szTaskName,initiator_person_name);	
+				system (szStart);
+				
+				tc_strcpy(szStart, "Start ");	
+				szSendEmail				= false;
+				
+				}
+				}
+			}
 			
 			
 			if (email_address) MEM_free(email_address);
@@ -1574,7 +2191,10 @@ extern DLLAPI int GTAC_register_action_handler(int *decision, va_list args)
 
     ERROR_CHECK(EPM_register_action_handler("GTAC-action-handler",
         "Placement: Assign Task Action of select-signoff-team task",
-        GTAC_action_handler));		
+        GTAC_action_handler));	
+	ERROR_CHECK(EPM_register_action_handler("Validate-Document-handler",
+        "Placement: Assign Task Action of select-signoff-team task",
+        Validate_Document_handler));			
 
     return ITK_ok;
 }
