@@ -25,7 +25,7 @@
         
 		
 		
-            <section titleKey="Reviewers">
+            <section titleKey="Reviewers(MM Lead and POD Lead)">
                 <objectSet source="HasParticipant.KP2_MMLead"  defaultdisplay="tableDisplay"> 
                     <tableDisplay>
                         <property name="fnd0AssigneeUser"/>
@@ -52,7 +52,7 @@
             </section>
        
 			
-            <section titleKey="Approvers">
+            <section titleKey="Approvers(SME and QA)">
              <objectSet source="HasParticipant.KP2_SME"  defaultdisplay="tableDisplay"> 
                  
                     <tableDisplay>

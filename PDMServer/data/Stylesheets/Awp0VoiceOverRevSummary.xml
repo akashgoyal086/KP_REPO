@@ -58,7 +58,7 @@
     <page titleKey="tc_xrt_viewer" visibleWhen="TC_Attaches!=null and ActiveWorkspace:SubLocation!=com.siemens.splm.client.occmgmt:OccurrenceManagementSubLocation">
         <customPanel java="com.siemens.splm.client.docmgmt.galleryviewer.xrtViewer"/>
     </page>
-	   <inject type="dataset" src="Awp0KPDocParticipantSummary"/>
+	   <inject type="dataset" src="Awp0VOParticipantSummary"/>
     <page titleKey="VO Attachments">
         <section titleKey="tc_xrt_Files">
             <objectSet source="TC_Attaches.Dataset" defaultdisplay="listDisplay" sortby="object_string" sortdirection="ascending">

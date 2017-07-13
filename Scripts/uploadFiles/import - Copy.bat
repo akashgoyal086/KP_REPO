@@ -1,0 +1,3 @@
+rem import_file.exe -u=infodba -p=infodba -f=C:\Users\Administrator\Desktop\uploadFiles\Test.mp4 -type=KP2_Movie -relationType=IMAN_UG_altrep   -ie=y -item=MM-000042  -vb -log=import.txt
+rem import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\test123.txt  -d=test123 -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=IMAN_specification -vb -log=C:\KP_GIT\Scripts\uploadFiles\Files\import22.txt
+import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\test127.txt  -d=test127 -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=IMAN_specification -vb 

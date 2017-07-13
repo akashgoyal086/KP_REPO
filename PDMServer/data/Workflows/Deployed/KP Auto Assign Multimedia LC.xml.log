@@ -1,0 +1,42 @@
+****************************
+   PLMXML Log File Header   
+   ----------------------   
+            IMPORT          
+****************************
+Server Hostname :  TCPRODCORP
+Teamcenter version :  Teamcenter V11000.2.2.20_20160504.00
+Syslog-FileName :  C:\Users\TCAdmin\AppData\Local\Temp\tcserver.exe1a505fbb.syslog
+LOG-FileName is:  KP Auto Assign Multimedia LC.xml.log
+XML-FileName is:  KP Auto Assign Multimedia LC.xml
+XSLT-FileName is:  
+TransferMode Name :  workflow_template_import
+OverWrite-ExistingData is:  0
+CheckOutObjects-UponExport is:  0
+CheckFor-ExportPrivilege is:  1
+****************************
+Workflow Template Import Mode: No Overwrite
+
+
+
+
+///// Teamcenter Import Summary BEGIN: Processed the following PLMXML Elements
+  Element:: UserData                                           Count:: 21 
+  Element:: WorkflowBusinessRule                               Count:: 8 
+  Element:: WorkflowBusinessRuleHandler                        Count:: 8 
+  Element:: WorkflowHandler                                    Count:: 47 
+  Element:: WorkflowTemplate                                   Count:: 27 
+///// Teamcenter Import Summary: Processed the following Teamcenter Objects
+ TCObject:: EPMAddStatusTaskTemplate                           Count:: 7 
+ TCObject:: EPMBRHandler                                       Count:: 8 
+ TCObject:: EPMBusinessRule                                    Count:: 8 
+ TCObject:: EPMConditionTaskTemplate                           Count:: 1 
+ TCObject:: EPMDoTaskTemplate                                  Count:: 4 
+ TCObject:: EPMHandler                                         Count:: 47 
+ TCObject:: EPMOrTaskTemplate                                  Count:: 3 
+ TCObject:: EPMPerformSignoffTaskTemplate                      Count:: 3 
+ TCObject:: EPMReviewTaskTemplate                              Count:: 3 
+ TCObject:: EPMSelectSignoffTaskTemplate                       Count:: 3 
+ TCObject:: EPMTaskTemplate                                    Count:: 3 
+///// Teamcenter Import Summary END: /////
+
+

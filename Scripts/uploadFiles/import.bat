@@ -1,0 +1,4 @@
+import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\Sample.txt   -d=Sample  -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=TC_Attaches -vb 
+import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\Sample2.txt  -d=Sample2 -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=TC_Attaches -vb 
+import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\Sample3.txt  -d=Sample3 -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=TC_Attaches -vb 
+import_file.exe -u=infodba -p=infodba -f=C:\KP_GIT\Scripts\uploadFiles\Files\Sample4.txt  -d=Sample4 -ref=Text -type=Text -ie=y -item=MM-000042 -revision=A -relationType=TC_Attaches -vb 

@@ -1,0 +1,42 @@
+****************************
+   PLMXML Log File Header   
+   ----------------------   
+            IMPORT          
+****************************
+Server Hostname :  TCPRODCORP
+Teamcenter version :  Teamcenter V11000.2.2.20_20160504.00
+Syslog-FileName :  C:\Users\TCAdmin\AppData\Local\Temp\tcserver.exe1a505fbb.syslog
+LOG-FileName is:  KP Auto Assign CAD PART LC.xml.log
+XML-FileName is:  KP Auto Assign CAD PART LC.xml
+XSLT-FileName is:  
+TransferMode Name :  workflow_template_import
+OverWrite-ExistingData is:  0
+CheckOutObjects-UponExport is:  0
+CheckFor-ExportPrivilege is:  1
+****************************
+Workflow Template Import Mode: No Overwrite
+
+
+
+
+///// Teamcenter Import Summary BEGIN: Processed the following PLMXML Elements
+  Element:: UserData                                           Count:: 19 
+  Element:: WorkflowBusinessRule                               Count:: 7 
+  Element:: WorkflowBusinessRuleHandler                        Count:: 7 
+  Element:: WorkflowHandler                                    Count:: 40 
+  Element:: WorkflowTemplate                                   Count:: 24 
+///// Teamcenter Import Summary: Processed the following Teamcenter Objects
+ TCObject:: EPMAddStatusTaskTemplate                           Count:: 7 
+ TCObject:: EPMBRHandler                                       Count:: 7 
+ TCObject:: EPMBusinessRule                                    Count:: 7 
+ TCObject:: EPMConditionTaskTemplate                           Count:: 1 
+ TCObject:: EPMDoTaskTemplate                                  Count:: 3 
+ TCObject:: EPMHandler                                         Count:: 40 
+ TCObject:: EPMOrTaskTemplate                                  Count:: 3 
+ TCObject:: EPMPerformSignoffTaskTemplate                      Count:: 3 
+ TCObject:: EPMReviewTaskTemplate                              Count:: 3 
+ TCObject:: EPMSelectSignoffTaskTemplate                       Count:: 3 
+ TCObject:: EPMTaskTemplate                                    Count:: 1 
+///// Teamcenter Import Summary END: /////
+
+

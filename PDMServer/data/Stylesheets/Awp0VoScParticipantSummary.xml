@@ -22,27 +22,8 @@
         </content>
         
 		
-			        <content visibleWhen="awp0ShowParticipants==KP2_PODLead">
-            <section titleKey="Reviewers(POD LEAD)">
-                <objectSet source="HasParticipant.KP2_PODLead" defaultdisplay="tableDisplay"> 
-                
-                    <tableDisplay>
-                        <property name="fnd0AssigneeUser"/>
-                        <property name="fnd0AssigneeRole"/>
-                        <property name="fnd0AssigneeGroup"/>
-                        <property name="fnd0AssigneeEmail"/>
-                        <property name="fnd0AssigneePhone"/>
-                        <property name="HasParticipant.fnd0AssignmentComment"/> 
-                    </tableDisplay>
-                    <listDisplay/>
-                </objectSet>
-                <content visibleWhen="awp0RequiredParticipants==KP2_PODLead">
-                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
-                </content>
-            </section>
-        </content>
 			        <content visibleWhen="awp0ShowParticipants==KP2_QA">
-            <section titleKey="Approvers(QA)">
+            <section titleKey="Reviewers(QA)">
                 <objectSet source="HasParticipant.KP2_QA" defaultdisplay="tableDisplay"> 
                 
                     <tableDisplay>
@@ -56,6 +37,25 @@
                     <listDisplay/>
                 </objectSet>
                 <content visibleWhen="awp0RequiredParticipants==KP2_QA">
+                    <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
+                </content>
+            </section>
+        </content>
+			        <content visibleWhen="awp0ShowParticipants==KP2_SME">
+            <section titleKey="Approvers(SME)">
+                <objectSet source="HasParticipant.KP2_SME" defaultdisplay="tableDisplay"> 
+                
+                    <tableDisplay>
+                        <property name="fnd0AssigneeUser"/>
+                        <property name="fnd0AssigneeRole"/>
+                        <property name="fnd0AssigneeGroup"/>
+                        <property name="fnd0AssigneeEmail"/>
+                        <property name="fnd0AssigneePhone"/>
+                        <property name="HasParticipant.fnd0AssignmentComment"/> 
+                    </tableDisplay>
+                    <listDisplay/>
+                </objectSet>
+                <content visibleWhen="awp0RequiredParticipants==KP2_SME">
                     <htmlPanel id = "com.siemens.splm.client.workflow.requiredParticipantTile"/>
                 </content>
             </section>
